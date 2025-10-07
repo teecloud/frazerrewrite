@@ -1,0 +1,7 @@
+{
+  "name": "frazer-ui",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
