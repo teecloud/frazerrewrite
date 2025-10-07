@@ -1,17 +1,126 @@
-<ion-header [translucent]="true">
+<ion-header translucent="true">
   <ion-toolbar>
-    <ion-title>
-      Tab 1
-    </ion-title>
+    <ion-title>Frazer Job Board</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="loadRecords()" [disabled]="isLoading()">
+        <ion-icon slot="icon-only" name="refresh"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="ion-padding" *ngIf="errorMessage()">
+    <div class="error-banner">{{ errorMessage() }}</div>
+  </div>
 
-  <app-explore-container name="Tab 1 page"></app-explore-container>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Workshop Snapshot</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12" size-md="4">
+            <div class="stat">
+              <span class="label">Active Jobs</span>
+              <span class="value">{{ totals().total }}</span>
+            </div>
+          </ion-col>
+          <ion-col size="12" size-md="4">
+            <div class="stat">
+              <span class="label">Open Balances</span>
+              <span class="value">{{ totals().outstandingBalance | currency }}</span>
+            </div>
+          </ion-col>
+          <ion-col size="12" size-md="4">
+            <div class="stat">
+              <span class="label">Awaiting Payment</span>
+              <span class="value">{{ totals().outstandingCount }}</span>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12">
+            <div class="status-tags">
+              <span *ngFor="let entry of totals().byStatus | keyvalue" class="chip">
+                {{ entry.key }} ({{ entry.value }})
+              </span>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Jobs in Progress</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list lines="full">
+        <ion-item *ngFor="let record of records(); trackBy: trackById" (click)="startEdit(record)">
+          <ion-label>
+            <h2>{{ record.customerName }}</h2>
+            <p *ngIf="record.vehicle">{{ record.vehicle }}</p>
+            <p class="meta">
+              <span>Status: {{ record.status }}</span>
+              <span>Balance: {{ record.balance | currency }}</span>
+            </p>
+            <p class="timestamp">Updated {{ record.updatedAt | date: 'medium' }}</p>
+          </ion-label>
+          <ion-button color="danger" fill="clear" (click)="deleteRecord(record, $event)">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
+        </ion-item>
+        <ion-item *ngIf="!records().length && !isLoading()">
+          <ion-label>No jobs recorded yet. Add your first ticket below.</ion-label>
+        </ion-item>
+        <ion-item *ngIf="isLoading()">
+          <ion-label>Loading jobs…</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>{{ isEditing() ? 'Update Job' : 'Log New Job' }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <form [formGroup]="recordForm" (ngSubmit)="submit()" autocomplete="off">
+        <ion-item>
+          <ion-label position="stacked">Customer Name</ion-label>
+          <ion-input formControlName="customerName" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Contact Number</ion-label>
+          <ion-input formControlName="contactNumber"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Vehicle</ion-label>
+          <ion-input formControlName="vehicle"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Status</ion-label>
+          <ion-input formControlName="status"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Balance</ion-label>
+          <ion-input type="number" formControlName="balance" min="0" step="0.01"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Notes</ion-label>
+          <ion-textarea formControlName="notes" autoGrow="true"></ion-textarea>
+        </ion-item>
+        <div class="form-actions">
+          <ion-button type="submit" [disabled]="isLoading()">
+            <ion-icon slot="start" [name]="isEditing() ? 'create' : 'add-circle'"></ion-icon>
+            {{ isEditing() ? 'Update Record' : 'Save Record' }}
+          </ion-button>
+          <ion-button type="button" fill="clear" (click)="startCreate()">Clear</ion-button>
+        </div>
+      </form>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
