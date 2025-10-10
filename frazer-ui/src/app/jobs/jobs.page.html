@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Jobs</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Enqueue Background Job</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <form [formGroup]="form" (ngSubmit)="enqueue()">
+        <ion-item>
+          <ion-label position="stacked">Job Type</ion-label>
+          <ion-select formControlName="jobType">
+            <ion-select-option value="ApplyRecurringFees">Apply Recurring Fees</ion-select-option>
+            <ion-select-option value="AutoUploads">Auto Uploads</ion-select-option>
+            <ion-select-option value="BackupTrigger">Backup Trigger</ion-select-option>
+            <ion-select-option value="PaymentSettlementPoll">Payment Settlement Poll</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Argument</ion-label>
+          <ion-input formControlName="argument"></ion-input>
+        </ion-item>
+        <ion-button expand="block" type="submit">Queue Job</ion-button>
+      </form>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Recent Runs</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let job of jobs$ | async">
+          <ion-label>
+            <h2>{{ job.jobType }}</h2>
+            <p>{{ job.status }} • {{ job.createdOn | date:'short' }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

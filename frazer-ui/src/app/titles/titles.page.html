@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Titles Pending</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-searchbar [formControl]="filter" placeholder="Filter by customer"></ion-searchbar>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Pending Title Work</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let row of rows$ | async">
+          <ion-label>
+            <h2>{{ row.customerName }}</h2>
+            <p>{{ row.stockNumber }} • {{ row.vin }} • {{ row.status }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
