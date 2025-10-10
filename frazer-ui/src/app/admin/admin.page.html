@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Administration</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Adapter Credentials</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <ion-item>
+          <ion-label position="stacked">Frazer Hub Base URL</ion-label>
+          <ion-input formControlName="frazerHubUrl"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">TextMaxx API Key</ion-label>
+          <ion-input formControlName="textMaxxApiKey"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">SiriusXM API Key</ion-label>
+          <ion-input formControlName="siriusXmApiKey"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">CardPointe Merchant ID</ion-label>
+          <ion-input formControlName="cardPointeMerchantId"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">CardPointe API User</ion-label>
+          <ion-input formControlName="cardPointeApiUser"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">CardPointe API Key</ion-label>
+          <ion-input formControlName="cardPointeApiKey"></ion-input>
+        </ion-item>
+        <ion-button type="submit" expand="block">Save Changes</ion-button>
+      </form>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

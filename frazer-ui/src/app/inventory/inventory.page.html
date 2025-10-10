@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Inventory</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Search Inventory</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-searchbar [formControl]="search" placeholder="Search by stock, VIN, year, make, or model"></ion-searchbar>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list>
+    <ion-item *ngFor="let vehicle of filtered$ | async">
+      <ion-label>
+        <h2>{{ vehicle.stockNumber }} — {{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</h2>
+        <p>VIN {{ vehicle.vin }} • Status: {{ vehicle.isSold ? 'Sold' : 'Available' }}</p>
+      </ion-label>
+      <ion-buttons slot="end">
+        <ion-button fill="clear">View</ion-button>
+        <ion-button fill="outline" color="success">Start Sale</ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-list>
+</ion-content>

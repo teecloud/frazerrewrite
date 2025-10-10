@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Sales Desk</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Active Sales</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let sale of sales$ | async" [routerLink]="['/sales', sale.id]">
+          <ion-label>
+            <h2>{{ sale.id }}</h2>
+            <p>Status: {{ sale.status }} • Created {{ sale.createdOn | date:'short' }}</p>
+          </ion-label>
+          <ion-button fill="outline" slot="end">Resume</ion-button>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

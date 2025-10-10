@@ -1,0 +1,69 @@
+<ion-grid fixed>
+  <ion-row class="metrics" *ngIf="metrics$ | async as metrics">
+    <ion-col size="12" sizeLg="3">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Inventory</ion-card-subtitle>
+          <ion-card-title>{{ metrics.inventoryCount }}</ion-card-title>
+        </ion-card-header>
+      </ion-card>
+    </ion-col>
+    <ion-col size="12" sizeLg="3">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Sold Units</ion-card-subtitle>
+          <ion-card-title>{{ metrics.soldCount }}</ion-card-title>
+        </ion-card-header>
+      </ion-card>
+    </ion-col>
+    <ion-col size="12" sizeLg="3">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Open Sales</ion-card-subtitle>
+          <ion-card-title>{{ metrics.openSales }}</ion-card-title>
+        </ion-card-header>
+      </ion-card>
+    </ion-col>
+    <ion-col size="12" sizeLg="3">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Collected Today</ion-card-subtitle>
+          <ion-card-title>{{ metrics.collected | currency }}</ion-card-title>
+        </ion-card-header>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col size="12" sizeLg="6">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Recent Jobs</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list *ngIf="jobs$ | async as jobs">
+            <ion-item *ngFor="let job of jobs">
+              <ion-label>
+                <h2>{{ job.jobType }}</h2>
+                <p>{{ job.status }} • {{ job.createdOn | date:'short' }}</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+    <ion-col size="12" sizeLg="6">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Operational Notes</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>
+            This dashboard surfaces the heartbeat of your Frazer dealership. Tie it into the API services to display
+            live metrics for inventory aging, desks in progress, and payment health.
+          </p>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+</ion-grid>

@@ -1,0 +1,28 @@
+<ion-content class="ion-padding login-page" fullscreen>
+  <div class="login-card">
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>Frazer Dealer Portal</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <ion-list lines="full">
+        <ion-item>
+          <ion-label position="stacked">Username</ion-label>
+          <ion-input formControlName="username" autocomplete="username"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Password</ion-label>
+          <ion-input type="password" formControlName="password" autocomplete="current-password"></ion-input>
+        </ion-item>
+      </ion-list>
+
+      <div class="error" *ngIf="error() as message">{{ message }}</div>
+
+      <ion-button expand="block" type="submit" [disabled]="loading()">
+        {{ loading() ? 'Signing in…' : 'Sign In' }}
+      </ion-button>
+    </form>
+  </div>
+</ion-content>

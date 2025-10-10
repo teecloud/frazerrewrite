@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/sales"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Sale Detail</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" *ngIf="sale$ | async as sale">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Sale {{ sale.id }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Status: {{ sale.status }}</p>
+      <p>Created: {{ sale.createdOn | date:'medium' }}</p>
+      <p>Subtotal: {{ sale.subtotal | currency }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Workflow</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-label>Draft</ion-label>
+          <ion-button fill="outline" slot="end">Edit Vehicle</ion-button>
+        </ion-item>
+        <ion-item>
+          <ion-label>Fees</ion-label>
+          <ion-button fill="outline" slot="end">Add Fee</ion-button>
+        </ion-item>
+        <ion-item>
+          <ion-label>Payments</ion-label>
+          <ion-button fill="outline" slot="end">Record Payment</ion-button>
+        </ion-item>
+        <ion-item>
+          <ion-label>Finalize</ion-label>
+          <ion-button color="success" slot="end">Complete Sale</ion-button>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

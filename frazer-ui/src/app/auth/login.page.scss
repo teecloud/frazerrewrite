@@ -1,0 +1,19 @@
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card {
+  width: min(420px, 100%);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.16);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--ion-color-light, #ffffff);
+}
+
+.error {
+  color: var(--ion-color-danger);
+  margin: 16px;
+  text-align: center;
+}

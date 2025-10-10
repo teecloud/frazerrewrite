@@ -1,0 +1,58 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Reports</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Inventory Report</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-button fill="outline" (click)="exportCsv('inventory')">Export CSV</ion-button>
+      <ion-list>
+        <ion-item *ngFor="let row of inventory$ | async">
+          <ion-label>
+            <h2>{{ row.stockNumber }} — {{ row.year }} {{ row.make }} {{ row.model }}</h2>
+            <p>Arrived {{ row.dateArrived | date:'shortDate' }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Titles Pending</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-button fill="outline" (click)="exportCsv('titles')">Export CSV</ion-button>
+      <ion-list>
+        <ion-item *ngFor="let row of titles$ | async">
+          <ion-label>
+            <h2>{{ row.stockNumber }} — {{ row.customerName }}</h2>
+            <p>{{ row.status }} • {{ row.saleDate | date:'short' }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Insurance Summary</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-button fill="outline" (click)="exportCsv('insurance')">Export CSV</ion-button>
+      <ion-list>
+        <ion-item *ngFor="let provider of insurance$ | async">
+          <ion-label>
+            <h2>{{ provider.name }}</h2>
+            <p>{{ provider.phone }} • {{ provider.email }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
