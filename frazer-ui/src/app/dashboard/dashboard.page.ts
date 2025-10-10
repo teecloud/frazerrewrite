@@ -1,6 +1,18 @@
-import { AsyncPipe, CurrencyPipe, DatePipe, JsonPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe, CurrencyPipe, DatePipe, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
-import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonGrid, IonRow } from '@ionic/angular/standalone';
+import {
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonCol,
+  IonGrid,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonRow,
+} from '@ionic/angular/standalone';
 import { combineLatest, map } from 'rxjs';
 import { provideFixtures } from '../data/fixtures';
 
@@ -14,14 +26,16 @@ import { provideFixtures } from '../data/fixtures';
     IonCard,
     IonCardHeader,
     IonCardTitle,
-    IonCardSubtitle,
     IonCardContent,
+    IonCardSubtitle,
+    IonList,
+    IonItem,
+    IonLabel,
     AsyncPipe,
     NgIf,
     NgFor,
     CurrencyPipe,
     DatePipe,
-    JsonPipe,
   ],
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],

@@ -1,6 +1,6 @@
 import { AsyncPipe, CurrencyPipe, DatePipe, NgFor, NgIf } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import {
   IonBackButton,
   IonButton,
@@ -11,6 +11,7 @@ import {
   IonCardTitle,
   IonContent,
   IonHeader,
+  IonItem,
   IonLabel,
   IonList,
   IonTitle,
@@ -35,8 +36,8 @@ import { provideFixtures } from '../data/fixtures';
     IonCardTitle,
     IonCardContent,
     IonList,
+    IonItem,
     IonLabel,
-    RouterLink,
     AsyncPipe,
     NgIf,
     NgFor,

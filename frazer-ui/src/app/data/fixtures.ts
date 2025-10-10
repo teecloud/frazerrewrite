@@ -6,6 +6,7 @@ import {
   JobStatus,
   PaymentDashboardItem,
   SaleSummary,
+  TitlesPendingReportRow,
   VehicleSummary,
 } from '../shared/models';
 import { ApiClientService } from '../core/api-client.service';

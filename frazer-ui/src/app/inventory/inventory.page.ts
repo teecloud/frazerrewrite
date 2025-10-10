@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe, NgFor } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -42,7 +42,6 @@ import { VehicleSummary } from '../shared/models';
     ReactiveFormsModule,
     AsyncPipe,
     NgFor,
-    NgIf,
   ],
   templateUrl: './inventory.page.html',
   styleUrls: ['./inventory.page.scss'],

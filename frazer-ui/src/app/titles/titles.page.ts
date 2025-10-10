@@ -1,4 +1,4 @@
-import { AsyncPipe, DatePipe, NgFor } from '@angular/common';
+import { AsyncPipe, NgFor } from '@angular/common';
 import { Component } from '@angular/core';
 import {
   IonCard,
@@ -37,7 +37,6 @@ import { provideFixtures } from '../data/fixtures';
     ReactiveFormsModule,
     AsyncPipe,
     NgFor,
-    DatePipe,
   ],
   templateUrl: './titles.page.html',
   styleUrls: ['./titles.page.scss'],

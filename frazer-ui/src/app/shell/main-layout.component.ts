@@ -2,6 +2,7 @@ import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import {
   IonApp,
+  IonButton,
   IonButtons,
   IonContent,
   IonHeader,
@@ -12,7 +13,6 @@ import {
   IonMenu,
   IonMenuButton,
   IonMenuToggle,
-  IonRouterOutlet,
   IonSplitPane,
   IonTitle,
   IonToolbar,
@@ -46,7 +46,7 @@ interface NavItem {
     IonLabel,
     IonIcon,
     IonMenuToggle,
-    IonRouterOutlet,
+    IonButton,
     IonButtons,
     IonMenuButton,
     RouterLink,

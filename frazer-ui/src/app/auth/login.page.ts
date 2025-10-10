@@ -1,7 +1,7 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { NgIf } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { IonButton, IonContent, IonHeader, IonInput, IonItem, IonLabel, IonList, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { finalize } from 'rxjs';
 import { AuthService } from './auth.service';
@@ -20,8 +20,6 @@ import { AuthService } from './auth.service';
     IonInput,
     IonButton,
     ReactiveFormsModule,
-    RouterLink,
-    AsyncPipe,
     NgIf,
   ],
   templateUrl: './login.page.html',
