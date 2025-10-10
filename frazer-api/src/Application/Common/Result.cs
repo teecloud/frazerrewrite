@@ -2,7 +2,7 @@ namespace FrazerDealer.Application.Common;
 
 public class Result
 {
-    private Result(bool succeeded, IEnumerable<string>? errors = null)
+    protected Result(bool succeeded, IEnumerable<string>? errors = null)
     {
         Succeeded = succeeded;
         Errors = errors?.ToArray() ?? Array.Empty<string>();
