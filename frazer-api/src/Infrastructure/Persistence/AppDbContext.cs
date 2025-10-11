@@ -21,6 +21,79 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Vehicle>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.HasOne(e => e.CurrentSale)
+                .WithMany()
+                .HasForeignKey(e => e.CurrentSaleId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<Customer>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+        });
+
+        modelBuilder.Entity<Sale>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.Ignore(e => e.BalanceDue);
+
+            entity.HasOne(e => e.Vehicle)
+                .WithMany(e => e.SalesHistory)
+                .HasForeignKey(e => e.VehicleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Customer)
+                .WithMany(e => e.Sales)
+                .HasForeignKey(e => e.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Fee>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.HasOne(e => e.Sale)
+                .WithMany(e => e.Fees)
+                .HasForeignKey(e => e.SaleId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Payment>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.HasOne(e => e.Sale)
+                .WithMany(e => e.Payments)
+                .HasForeignKey(e => e.SaleId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<InsuranceProvider>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+        });
+
+        modelBuilder.Entity<RecurringJob>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+        });
+
+        modelBuilder.Entity<JobLog>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.HasOne(e => e.RecurringJob)
+                .WithMany()
+                .HasForeignKey(e => e.RecurringJobId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
 }
