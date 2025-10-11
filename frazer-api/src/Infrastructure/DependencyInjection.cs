@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Sockets;
 using FrazerDealer.Application.Interfaces;
 using FrazerDealer.Application.Interfaces.Adapters;
 using FrazerDealer.Application.Jobs;
