@@ -83,9 +83,27 @@ public static class DependencyInjection
         var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("DatabaseInitializer");
         try
         {
+            if (!await context.Database.CanConnectAsync(cancellationToken))
+            {
+                logger.LogWarning("Skipping database initialisation because the SQL Server instance is unavailable. Verify the connection string and server accessibility.");
+                return;
+            }
+
             await SeedData.SeedAsync(context, logger, cancellationToken);
         }
-        catch (Exception ex) when (ex is DbException or TimeoutException or InvalidOperationException)
+        catch (SqlException ex)
+        {
+            logger.LogError(ex, "Failed to initialise the database. Ensure the configured SQL Server is available and the connection string is correct.");
+        }
+        catch (DbException ex)
+        {
+            logger.LogError(ex, "Failed to initialise the database. Ensure the configured SQL Server is available and the connection string is correct.");
+        }
+        catch (TimeoutException ex)
+        {
+            logger.LogError(ex, "Failed to initialise the database. Ensure the configured SQL Server is available and the connection string is correct.");
+        }
+        catch (InvalidOperationException ex)
         {
             logger.LogError(ex, "Failed to initialise the database. Ensure the configured SQL Server is available and the connection string is correct.");
         }
