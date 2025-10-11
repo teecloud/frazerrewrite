@@ -1,10 +1,14 @@
 using System;
+using FrazerDealer.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace FrazerDealer.Infrastructure.Persistence.Migrations;
 
+[DbContext(typeof(AppDbContext))]
+[Migration("20240419120000_InitialCreate")]
 public partial class InitialCreate : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -65,12 +69,12 @@ public partial class InitialCreate : Migration
             columns: table => new
             {
                 Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                Vin = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                StockNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                Year = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                Make = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                Model = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                Trim = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                Vin = table.Column<string>(type: "nvarchar(17)", maxLength: 17, nullable: false),
+                StockNumber = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                Year = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
+                Make = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                Model = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                Trim = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                 Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                 Cost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                 IsSold = table.Column<bool>(type: "bit", nullable: false),

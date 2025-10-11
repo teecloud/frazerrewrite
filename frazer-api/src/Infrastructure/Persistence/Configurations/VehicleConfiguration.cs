@@ -14,6 +14,9 @@ public class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
         builder.Property(v => v.Make).HasMaxLength(128);
         builder.Property(v => v.Model).HasMaxLength(128);
         builder.Property(v => v.Trim).HasMaxLength(128);
+        builder.Property(v => v.Year).HasMaxLength(4);
+        builder.Property(v => v.Price).HasColumnType("decimal(18,2)");
+        builder.Property(v => v.Cost).HasColumnType("decimal(18,2)");
 
         builder.HasMany(v => v.SalesHistory)
             .WithOne(s => s.Vehicle)

@@ -274,30 +274,36 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
 
             b.Property<string>("Make")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(128)
+                .HasColumnType("nvarchar(128)");
 
             b.Property<string>("Model")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(128)
+                .HasColumnType("nvarchar(128)");
 
             b.Property<decimal>("Price")
                 .HasColumnType("decimal(18,2)");
 
             b.Property<string>("StockNumber")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(64)
+                .HasColumnType("nvarchar(64)");
 
             b.Property<string>("Trim")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(128)
+                .HasColumnType("nvarchar(128)");
 
             b.Property<string>("Vin")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(17)
+                .HasColumnType("nvarchar(17)");
 
             b.Property<string>("Year")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(4)
+                .HasColumnType("nvarchar(4)");
 
             b.HasKey("Id");
 
