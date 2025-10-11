@@ -1,3 +1,4 @@
+using System.Data.Common;
 using System.Net;
 using System.Net.Sockets;
 using FrazerDealer.Application.Interfaces;
@@ -80,7 +81,14 @@ public static class DependencyInjection
         using var scope = provider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("DatabaseInitializer");
-        await SeedData.SeedAsync(context, logger, cancellationToken);
+        try
+        {
+            await SeedData.SeedAsync(context, logger, cancellationToken);
+        }
+        catch (Exception ex) when (ex is DbException or TimeoutException or InvalidOperationException)
+        {
+            logger.LogError(ex, "Failed to initialise the database. Ensure the configured SQL Server is available and the connection string is correct.");
+        }
     }
 
     private static bool IsResolvableHangfireConnection(string connectionString, ILogger logger, out string reason)
