@@ -1,10 +1,12 @@
 import { inject } from '@angular/core';
 import { of } from 'rxjs';
 import {
+  CustomerSummary,
   InsuranceProvider,
   InventoryReportRow,
   JobStatus,
   PaymentDashboardItem,
+  Prospect,
   SaleSummary,
   TitlesPendingReportRow,
   VehicleSummary,
@@ -44,6 +46,57 @@ export const mockSales: SaleSummary[] = [
     createdOn: new Date().toISOString(),
   },
 ];
+
+export const mockCustomers: CustomerSummary[] = [
+  {
+    id: 'customer-1',
+    firstName: 'Jamie',
+    lastName: 'Wheeler',
+    email: 'jamie.wheeler@example.com',
+    phone: '555-0100',
+  },
+  {
+    id: 'customer-2',
+    firstName: 'Morgan',
+    lastName: 'Hughes',
+    email: 'morgan.hughes@example.com',
+    phone: '555-0200',
+  },
+];
+
+export const mockProspects: Prospect[] = mockVehicles.length
+  ? [
+      {
+        id: 'prospect-1',
+        name: 'Alex Johnson',
+        email: 'alex.johnson@example.com',
+        phone: '555-0400',
+        vehicles: [mockVehicles[0]].map((vehicle) => ({
+          id: vehicle.id,
+          stockNumber: vehicle.stockNumber,
+          year: vehicle.year,
+          make: vehicle.make,
+          model: vehicle.model,
+        })),
+      },
+      {
+        id: 'prospect-2',
+        name: 'Riley Chen',
+        email: 'riley.chen@example.com',
+        phone: '555-0500',
+        vehicles:
+          mockVehicles.length > 1
+            ? [mockVehicles[1]].map((vehicle) => ({
+                id: vehicle.id,
+                stockNumber: vehicle.stockNumber,
+                year: vehicle.year,
+                make: vehicle.make,
+                model: vehicle.model,
+              }))
+            : [],
+      },
+    ]
+  : [];
 
 export const mockPayments: PaymentDashboardItem[] = [
   {
@@ -109,5 +162,7 @@ export function provideFixtures(api = inject(ApiClientService)) {
     providers$: of(mockProviders),
     inventoryReport$: of(mockInventoryReport),
     titlesReport$: of(mockTitlesReport),
+    customers$: of(mockCustomers),
+    prospects$: of(mockProspects),
   };
 }

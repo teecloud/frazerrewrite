@@ -184,6 +184,29 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
             b.ToTable("Payments");
         });
 
+        modelBuilder.Entity("FrazerDealer.Domain.Entities.Prospect", b =>
+        {
+            b.Property<Guid>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("uniqueidentifier");
+
+            b.Property<string>("Email")
+                .IsRequired()
+                .HasColumnType("nvarchar(max)");
+
+            b.Property<string>("Name")
+                .IsRequired()
+                .HasColumnType("nvarchar(max)");
+
+            b.Property<string>("Phone")
+                .IsRequired()
+                .HasColumnType("nvarchar(max)");
+
+            b.HasKey("Id");
+
+            b.ToTable("Prospects");
+        });
+
         modelBuilder.Entity("FrazerDealer.Domain.Entities.RecurringJob", b =>
         {
             b.Property<Guid>("Id")
@@ -312,6 +335,21 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
             b.ToTable("Vehicles");
         });
 
+        modelBuilder.Entity("ProspectVehicle", b =>
+        {
+            b.Property<Guid>("ProspectsId")
+                .HasColumnType("uniqueidentifier");
+
+            b.Property<Guid>("VehiclesId")
+                .HasColumnType("uniqueidentifier");
+
+            b.HasKey("ProspectsId", "VehiclesId");
+
+            b.HasIndex("VehiclesId");
+
+            b.ToTable("ProspectVehicle", (string)null);
+        });
+
         modelBuilder.Entity("FrazerDealer.Domain.Entities.Fee", b =>
         {
             b.HasOne("FrazerDealer.Domain.Entities.Sale", "Sale")
@@ -374,6 +412,21 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
             b.Navigation("CurrentSale");
         });
 
+        modelBuilder.Entity("ProspectVehicle", b =>
+        {
+            b.HasOne("FrazerDealer.Domain.Entities.Prospect", null)
+                .WithMany()
+                .HasForeignKey("ProspectsId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            b.HasOne("FrazerDealer.Domain.Entities.Vehicle", null)
+                .WithMany()
+                .HasForeignKey("VehiclesId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+        });
+
         modelBuilder.Entity("FrazerDealer.Domain.Entities.Customer", b =>
         {
             b.Navigation("Sales");
@@ -388,6 +441,8 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
 
         modelBuilder.Entity("FrazerDealer.Domain.Entities.Vehicle", b =>
         {
+            b.Navigation("Prospects");
+
             b.Navigation("SalesHistory");
         });
 #pragma warning restore 612, 618

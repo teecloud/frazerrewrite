@@ -1,0 +1,87 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Prospects</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item *ngFor="let prospect of prospects$ | async">
+      <ion-label>
+        <h2>{{ prospect.name }}</h2>
+        <p>{{ prospect.email }}</p>
+        <p>{{ prospect.phone }}</p>
+        <div class="vehicle-tags" *ngIf="prospect.vehicles.length">
+          <ion-chip *ngFor="let vehicle of prospect.vehicles">
+            <ion-label>{{ vehicle.stockNumber }} • {{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</ion-label>
+          </ion-chip>
+        </div>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom">
+    <ion-fab-button color="primary" (click)="openModal()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <ion-modal [isOpen]="isModalOpen" (didDismiss)="handleModalDismiss()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Add Prospect</ion-title>
+          <ion-buttons slot="end">
+            <ion-button fill="clear" (click)="closeModal()">
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding">
+        <form class="prospect-form" [formGroup]="form" (ngSubmit)="saveProspect()">
+          <ion-list>
+            <ion-item>
+              <ion-label position="stacked">Name</ion-label>
+              <ion-input formControlName="name" type="text"></ion-input>
+            </ion-item>
+            <ion-text color="danger" *ngIf="form.controls.name.touched && form.controls.name.invalid">
+              Name is required.
+            </ion-text>
+
+            <ion-item>
+              <ion-label position="stacked">Email</ion-label>
+              <ion-input formControlName="email" type="email"></ion-input>
+            </ion-item>
+            <ion-text color="danger" *ngIf="form.controls.email.touched && form.controls.email.invalid">
+              Enter a valid email.
+            </ion-text>
+
+            <ion-item>
+              <ion-label position="stacked">Phone</ion-label>
+              <ion-input formControlName="phone" type="tel"></ion-input>
+            </ion-item>
+            <ion-text color="danger" *ngIf="form.controls.phone.touched && form.controls.phone.invalid">
+              Phone is required.
+            </ion-text>
+
+            <ion-item>
+              <ion-label position="stacked">Interested Vehicles</ion-label>
+              <ion-select formControlName="vehicleIds" multiple="true" interface="popover" placeholder="Select vehicles">
+                <ion-select-option *ngFor="let vehicle of vehicles$ | async" [value]="vehicle.id">
+                  {{ vehicle.stockNumber }} — {{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>
+
+          <div class="form-actions">
+            <ion-button type="button" fill="clear" (click)="closeModal()">Cancel</ion-button>
+            <ion-button type="submit" [disabled]="form.invalid">Add Prospect</ion-button>
+          </div>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

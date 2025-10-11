@@ -26,6 +26,22 @@ export interface VehicleDetail extends VehicleSummary {
   currentSaleId?: string;
 }
 
+export interface ProspectVehicleSummary {
+  id: string;
+  stockNumber: string;
+  year: string;
+  make: string;
+  model: string;
+}
+
+export interface Prospect {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  vehicles: ProspectVehicleSummary[];
+}
+
 export interface CustomerSummary {
   id: string;
   firstName: string;

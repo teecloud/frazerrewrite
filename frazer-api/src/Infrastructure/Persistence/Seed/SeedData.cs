@@ -1,3 +1,4 @@
+using System.Linq;
 using FrazerDealer.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -99,6 +100,37 @@ public static class SeedData
                     Notes = "Preferred gap coverage"
                 }
             }, cancellationToken);
+        }
+
+        if (!await context.Prospects.AnyAsync(cancellationToken))
+        {
+            var availableVehicles = context.Vehicles.Local.ToList();
+            if (availableVehicles.Count == 0)
+            {
+                availableVehicles = await context.Vehicles.ToListAsync(cancellationToken);
+            }
+
+            var prospects = new List<Prospect>
+            {
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Alex Johnson",
+                    Email = "alex.johnson@example.com",
+                    Phone = "555-0400",
+                    Vehicles = availableVehicles.Take(1).ToList()
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Riley Chen",
+                    Email = "riley.chen@example.com",
+                    Phone = "555-0500",
+                    Vehicles = availableVehicles.Skip(1).Take(1).ToList()
+                }
+            };
+
+            await context.Prospects.AddRangeAsync(prospects, cancellationToken);
         }
 
         await context.SaveChangesAsync(cancellationToken);

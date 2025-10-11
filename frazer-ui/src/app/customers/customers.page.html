@@ -1,0 +1,17 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Customers</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item *ngFor="let customer of customers$ | async">
+      <ion-label>
+        <h2>{{ customer.firstName }} {{ customer.lastName }}</h2>
+        <p>{{ customer.email }}</p>
+        <p>{{ customer.phone }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
