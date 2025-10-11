@@ -222,32 +222,20 @@ public partial class InitialCreate : Migration
 
     protected override void Down(MigrationBuilder migrationBuilder)
     {
-        migrationBuilder.DropForeignKey(
-            name: "FK_Vehicles_Sales_CurrentSaleId",
-            table: "Vehicles");
+        migrationBuilder.Sql("""
+            IF EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_Vehicles_Sales_CurrentSaleId')
+            BEGIN
+                ALTER TABLE [Vehicles] DROP CONSTRAINT [FK_Vehicles_Sales_CurrentSaleId];
+            END
+        """);
 
-        migrationBuilder.DropTable(
-            name: "Fees");
-
-        migrationBuilder.DropTable(
-            name: "InsuranceProviders");
-
-        migrationBuilder.DropTable(
-            name: "JobLogs");
-
-        migrationBuilder.DropTable(
-            name: "Payments");
-
-        migrationBuilder.DropTable(
-            name: "RecurringJobs");
-
-        migrationBuilder.DropTable(
-            name: "Sales");
-
-        migrationBuilder.DropTable(
-            name: "Customers");
-
-        migrationBuilder.DropTable(
-            name: "Vehicles");
+        migrationBuilder.Sql("DROP TABLE IF EXISTS [Fees];");
+        migrationBuilder.Sql("DROP TABLE IF EXISTS [InsuranceProviders];");
+        migrationBuilder.Sql("DROP TABLE IF EXISTS [JobLogs];");
+        migrationBuilder.Sql("DROP TABLE IF EXISTS [Payments];");
+        migrationBuilder.Sql("DROP TABLE IF EXISTS [RecurringJobs];");
+        migrationBuilder.Sql("DROP TABLE IF EXISTS [Sales];");
+        migrationBuilder.Sql("DROP TABLE IF EXISTS [Customers];");
+        migrationBuilder.Sql("DROP TABLE IF EXISTS [Vehicles];");
     }
 }
