@@ -1,18 +1,21 @@
+using System.Net;
 using FrazerDealer.Application.Interfaces;
 using FrazerDealer.Application.Interfaces.Adapters;
 using FrazerDealer.Application.Jobs;
 using FrazerDealer.Infrastructure.Adapters;
 using FrazerDealer.Infrastructure.Auth;
-using FrazerDealer.Infrastructure.Services;
 using FrazerDealer.Infrastructure.Jobs;
 using FrazerDealer.Infrastructure.Persistence;
 using FrazerDealer.Infrastructure.Persistence.Seed;
+using FrazerDealer.Infrastructure.Services;
+using Hangfire.MemoryStorage;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 
 namespace FrazerDealer.Infrastructure;
 
@@ -28,11 +31,23 @@ public static class DependencyInjection
 
         services.AddScoped<IDatabaseInitializer, DatabaseInitializer>();
 
-        services.AddHangfire(config =>
+        services.AddHangfire((serviceProvider, config) =>
         {
+            var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("HangfireConfiguration");
+            var hangfireConnectionString = configuration.GetConnectionString("Hangfire") ?? connectionString;
+
             config.UseSimpleAssemblyNameTypeSerializer()
-                .UseRecommendedSerializerSettings()
-                .UsePostgreSqlStorage(connectionString);
+                .UseRecommendedSerializerSettings();
+
+            if (IsResolvableHangfireConnection(hangfireConnectionString, logger, out var reason))
+            {
+                config.UsePostgreSqlStorage(hangfireConnectionString);
+            }
+            else
+            {
+                logger.LogWarning("{Reason} Falling back to in-memory Hangfire storage.", reason);
+                config.UseMemoryStorage();
+            }
         });
 
         services.AddHangfireServer();
@@ -65,6 +80,45 @@ public static class DependencyInjection
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("DatabaseInitializer");
         await SeedData.SeedAsync(context, logger, cancellationToken);
+    }
+
+    private static bool IsResolvableHangfireConnection(string connectionString, ILogger logger, out string reason)
+    {
+        try
+        {
+            var builder = new NpgsqlConnectionStringBuilder(connectionString);
+
+            if (string.IsNullOrWhiteSpace(builder.Host))
+            {
+                reason = "Hangfire connection string is missing a host.";
+                return false;
+            }
+
+            if (IPAddress.TryParse(builder.Host, out _))
+            {
+                reason = string.Empty;
+                return true;
+            }
+
+            try
+            {
+                _ = Dns.GetHostEntry(builder.Host);
+                reason = string.Empty;
+                return true;
+            }
+            catch (SocketException ex)
+            {
+                logger.LogDebug(ex, "Failed to resolve Hangfire host '{Host}'.", builder.Host);
+                reason = $"Unable to resolve Hangfire host '{builder.Host}'.";
+                return false;
+            }
+        }
+        catch (Exception ex) when (ex is ArgumentException or FormatException)
+        {
+            logger.LogDebug(ex, "Invalid Hangfire connection string provided.");
+            reason = "Invalid Hangfire connection string provided.";
+            return false;
+        }
     }
 }
 
