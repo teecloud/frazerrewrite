@@ -11,6 +11,7 @@ public class AppDbContext : DbContext
 
     public DbSet<Vehicle> Vehicles => Set<Vehicle>();
     public DbSet<Customer> Customers => Set<Customer>();
+    public DbSet<Prospect> Prospects => Set<Prospect>();
     public DbSet<Sale> Sales => Set<Sale>();
     public DbSet<Fee> Fees => Set<Fee>();
     public DbSet<Payment> Payments => Set<Payment>();
@@ -35,6 +36,15 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Customer>(entity =>
         {
             entity.HasKey(e => e.Id);
+        });
+
+        modelBuilder.Entity<Prospect>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.HasMany(e => e.Vehicles)
+                .WithMany(e => e.Prospects)
+                .UsingEntity(j => j.ToTable("ProspectVehicle"));
         });
 
         modelBuilder.Entity<Sale>(entity =>

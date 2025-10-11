@@ -6,6 +6,7 @@ using FrazerDealer.Contracts.Insurance;
 using FrazerDealer.Contracts.Inventory;
 using FrazerDealer.Contracts.Jobs;
 using FrazerDealer.Contracts.Payments;
+using FrazerDealer.Contracts.Prospects;
 using FrazerDealer.Contracts.Reports;
 using FrazerDealer.Contracts.Sales;
 using FrazerDealer.Domain.Entities;
@@ -192,6 +193,70 @@ public class FakeCustomerService : ICustomerService
 
         await _context.SaveChangesAsync(cancellationToken);
         return Result.Success();
+    }
+}
+
+public class FakeProspectService : IProspectService
+{
+    private readonly AppDbContext _context;
+
+    public FakeProspectService(AppDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<Result<IReadOnlyCollection<ProspectSummary>>> GetProspectsAsync(CancellationToken cancellationToken)
+    {
+        var prospects = await _context.Prospects.AsNoTracking()
+            .Select(p => new ProspectSummary(
+                p.Id,
+                p.Name,
+                p.Email,
+                p.Phone,
+                p.Vehicles.Select(v => new ProspectVehicleSummary(v.Id, v.StockNumber, v.Year, v.Make, v.Model)).ToList()))
+            .ToListAsync(cancellationToken);
+
+        return Result<IReadOnlyCollection<ProspectSummary>>.Success(prospects);
+    }
+
+    public async Task<Result<ProspectSummary>> GetProspectAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var prospect = await _context.Prospects.AsNoTracking()
+            .Select(p => new ProspectSummary(
+                p.Id,
+                p.Name,
+                p.Email,
+                p.Phone,
+                p.Vehicles.Select(v => new ProspectVehicleSummary(v.Id, v.StockNumber, v.Year, v.Make, v.Model)).ToList()))
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+
+        if (prospect is null)
+        {
+            return Result<ProspectSummary>.Failure("Prospect not found");
+        }
+
+        return Result<ProspectSummary>.Success(prospect);
+    }
+
+    public async Task<Result<ProspectSummary>> CreateProspectAsync(CreateProspectRequest request, CancellationToken cancellationToken)
+    {
+        var vehicles = await _context.Vehicles
+            .Where(v => request.VehicleIds.Contains(v.Id))
+            .ToListAsync(cancellationToken);
+
+        var prospect = new Prospect
+        {
+            Id = Guid.NewGuid(),
+            Name = request.Name,
+            Email = request.Email,
+            Phone = request.Phone,
+            Vehicles = vehicles
+        };
+
+        _context.Prospects.Add(prospect);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return await GetProspectAsync(prospect.Id, cancellationToken);
     }
 }
 

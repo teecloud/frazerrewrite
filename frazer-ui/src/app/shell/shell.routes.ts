@@ -16,6 +16,14 @@ export const SHELL_ROUTES: Routes = [
         loadComponent: () => import('../inventory/inventory.page').then((m) => m.InventoryPage),
       },
       {
+        path: 'customers',
+        loadComponent: () => import('../customers/customers.page').then((m) => m.CustomersPage),
+      },
+      {
+        path: 'prospects',
+        loadComponent: () => import('../prospects/prospects.page').then((m) => m.ProspectsPage),
+      },
+      {
         path: 'sales',
         loadChildren: () => import('../sales/sales.routes').then((m) => m.SALES_ROUTES),
       },

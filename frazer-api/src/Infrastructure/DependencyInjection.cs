@@ -57,6 +57,7 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, FakeAuthService>();
         services.AddScoped<IVehicleService, FakeVehicleService>();
         services.AddScoped<ICustomerService, FakeCustomerService>();
+        services.AddScoped<IProspectService, FakeProspectService>();
         services.AddScoped<ISaleService, FakeSaleService>();
         services.AddScoped<IFeeService, FakeFeeService>();
         services.AddScoped<IInsuranceService, FakeInsuranceService>();

@@ -19,7 +19,19 @@ import {
 } from '@ionic/angular/standalone';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { documentTextOutline, keyOutline, peopleOutline, receiptOutline, speedometerOutline, swapHorizontalOutline, walletOutline, warningOutline, cloudUploadOutline, constructOutline } from 'ionicons/icons';
+import {
+  documentTextOutline,
+  keyOutline,
+  peopleOutline,
+  personAddOutline,
+  receiptOutline,
+  speedometerOutline,
+  swapHorizontalOutline,
+  walletOutline,
+  warningOutline,
+  cloudUploadOutline,
+  constructOutline,
+} from 'ionicons/icons';
 import { AuthService } from '../auth/auth.service';
 import { Role } from '../shared/models';
 
@@ -68,6 +80,7 @@ export class MainLayoutComponent {
       documentTextOutline,
       peopleOutline,
       swapHorizontalOutline,
+      personAddOutline,
       receiptOutline,
       warningOutline,
       keyOutline,
@@ -80,6 +93,8 @@ export class MainLayoutComponent {
   readonly items: NavItem[] = [
     { label: 'Dashboard', icon: 'speedometer-outline', path: '/dashboard' },
     { label: 'Inventory', icon: 'document-text-outline', path: '/inventory' },
+    { label: 'Customers', icon: 'people-outline', path: '/customers' },
+    { label: 'Prospects', icon: 'person-add-outline', path: '/prospects' },
     { label: 'Sales', icon: 'swap-horizontal-outline', path: '/sales' },
     { label: 'Titles', icon: 'warning-outline', path: '/titles' },
     { label: 'Insurance', icon: 'key-outline', path: '/insurance' },
