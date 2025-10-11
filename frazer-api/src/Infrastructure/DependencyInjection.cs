@@ -123,36 +123,76 @@ public static class DependencyInjection
                 return false;
             }
 
+            var hostResolvable = false;
+
             if (host is "." or "(local)" || host.Equals("localhost", StringComparison.OrdinalIgnoreCase) ||
                 host.StartsWith("(localdb)", StringComparison.OrdinalIgnoreCase))
             {
-                reason = string.Empty;
-                return true;
+                hostResolvable = true;
+            }
+            else if (IPAddress.TryParse(host, out _))
+            {
+                hostResolvable = true;
+            }
+            else
+            {
+                try
+                {
+                    _ = Dns.GetHostEntry(host);
+                    hostResolvable = true;
+                }
+                catch (SocketException ex)
+                {
+                    logger.LogDebug(ex, "Failed to resolve Hangfire host '{Host}'.", host);
+                    reason = $"Unable to resolve Hangfire host '{host}'.";
+                    return false;
+                }
             }
 
-            if (IPAddress.TryParse(host, out _))
+            if (!hostResolvable)
             {
-                reason = string.Empty;
-                return true;
-            }
-
-            try
-            {
-                _ = Dns.GetHostEntry(host);
-                reason = string.Empty;
-                return true;
-            }
-            catch (SocketException ex)
-            {
-                logger.LogDebug(ex, "Failed to resolve Hangfire host '{Host}'.", host);
                 reason = $"Unable to resolve Hangfire host '{host}'.";
                 return false;
             }
+
+            if (!CanEstablishHangfireConnection(builder, logger, out reason))
+            {
+                return false;
+            }
+
+            reason = string.Empty;
+            return true;
         }
         catch (Exception ex) when (ex is ArgumentException or FormatException)
         {
             logger.LogDebug(ex, "Invalid Hangfire connection string provided.");
             reason = "Invalid Hangfire connection string provided.";
+            return false;
+        }
+    }
+
+    private static bool CanEstablishHangfireConnection(SqlConnectionStringBuilder builder, ILogger logger, out string reason)
+    {
+        try
+        {
+            var testBuilder = new SqlConnectionStringBuilder(builder.ConnectionString);
+            var configuredTimeout = testBuilder.ConnectTimeout;
+
+            if (configuredTimeout <= 0 || configuredTimeout > 5)
+            {
+                testBuilder.ConnectTimeout = 5;
+            }
+
+            using var connection = new SqlConnection(testBuilder.ConnectionString);
+            connection.Open();
+
+            reason = string.Empty;
+            return true;
+        }
+        catch (Exception ex) when (ex is SqlException or InvalidOperationException or TimeoutException)
+        {
+            logger.LogDebug(ex, "Unable to connect to Hangfire SQL Server using the provided connection string.");
+            reason = $"Unable to connect to Hangfire SQL Server. {ex.Message}";
             return false;
         }
     }
