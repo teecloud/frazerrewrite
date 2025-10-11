@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using OpenTelemetry.Instrumentation.Runtime;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -50,7 +51,14 @@ var jwtSettings = builder.Configuration
     .Get<JwtOptions>() ?? new JwtOptions();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "FrazerDealer API",
+        Version = "v1"
+    });
+});
 
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource.AddService("FrazerDealer.Api"))
