@@ -11,12 +11,12 @@ using FrazerDealer.Infrastructure.Persistence.Seed;
 using FrazerDealer.Infrastructure.Services;
 using Hangfire.MemoryStorage;
 using Hangfire;
-using Hangfire.PostgreSql;
+using Hangfire.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Npgsql;
+using Microsoft.Data.SqlClient;
 
 namespace FrazerDealer.Infrastructure;
 
@@ -28,7 +28,7 @@ public static class DependencyInjection
             ?? throw new InvalidOperationException("Connection string 'Default' not found.");
 
         services.AddDbContext<AppDbContext>(options =>
-            options.UseNpgsql(connectionString));
+            options.UseSqlServer(connectionString));
 
         services.AddScoped<IDatabaseInitializer, DatabaseInitializer>();
 
@@ -42,7 +42,7 @@ public static class DependencyInjection
 
             if (IsResolvableHangfireConnection(hangfireConnectionString, logger, out var reason))
             {
-                config.UsePostgreSqlStorage(hangfireConnectionString);
+                config.UseSqlServerStorage(hangfireConnectionString);
             }
             else
             {
@@ -87,15 +87,50 @@ public static class DependencyInjection
     {
         try
         {
-            var builder = new NpgsqlConnectionStringBuilder(connectionString);
+            var builder = new SqlConnectionStringBuilder(connectionString);
+            var dataSource = builder.DataSource?.Trim();
 
-            if (string.IsNullOrWhiteSpace(builder.Host))
+            if (string.IsNullOrWhiteSpace(dataSource))
             {
-                reason = "Hangfire connection string is missing a host.";
+                reason = "Hangfire connection string is missing a server.";
                 return false;
             }
 
-            if (IPAddress.TryParse(builder.Host, out _))
+            var host = dataSource;
+
+            if (host.StartsWith("tcp:", StringComparison.OrdinalIgnoreCase))
+            {
+                host = host[4..];
+            }
+
+            var instanceSeparatorIndex = host.IndexOf('\\');
+            if (instanceSeparatorIndex >= 0)
+            {
+                host = host[..instanceSeparatorIndex];
+            }
+
+            var portSeparatorIndex = host.IndexOf(',');
+            if (portSeparatorIndex >= 0)
+            {
+                host = host[..portSeparatorIndex];
+            }
+
+            host = host.Trim();
+
+            if (string.IsNullOrWhiteSpace(host))
+            {
+                reason = "Hangfire connection string is missing a server host.";
+                return false;
+            }
+
+            if (host is "." or "(local)" || host.Equals("localhost", StringComparison.OrdinalIgnoreCase) ||
+                host.StartsWith("(localdb)", StringComparison.OrdinalIgnoreCase))
+            {
+                reason = string.Empty;
+                return true;
+            }
+
+            if (IPAddress.TryParse(host, out _))
             {
                 reason = string.Empty;
                 return true;
@@ -103,14 +138,14 @@ public static class DependencyInjection
 
             try
             {
-                _ = Dns.GetHostEntry(builder.Host);
+                _ = Dns.GetHostEntry(host);
                 reason = string.Empty;
                 return true;
             }
             catch (SocketException ex)
             {
-                logger.LogDebug(ex, "Failed to resolve Hangfire host '{Host}'.", builder.Host);
-                reason = $"Unable to resolve Hangfire host '{builder.Host}'.";
+                logger.LogDebug(ex, "Failed to resolve Hangfire host '{Host}'.", host);
+                reason = $"Unable to resolve Hangfire host '{host}'.";
                 return false;
             }
         }
