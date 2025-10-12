@@ -41,10 +41,6 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Prospect>(entity =>
         {
             entity.HasKey(e => e.Id);
-
-            entity.HasMany(e => e.Vehicles)
-                .WithMany(e => e.Prospects)
-                .UsingEntity(j => j.ToTable("ProspectVehicle"));
         });
 
         modelBuilder.Entity<Sale>(entity =>

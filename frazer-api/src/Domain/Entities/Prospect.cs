@@ -7,5 +7,5 @@ public class Prospect
     public string Email { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
 
-    public List<Vehicle> Vehicles { get; set; } = new();
+    public ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
 }
