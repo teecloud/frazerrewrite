@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using FrazerDealer.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -205,6 +206,8 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
             b.HasKey("Id");
 
             b.ToTable("Prospects");
+
+            b.Navigation("Vehicles");
         });
 
         modelBuilder.Entity("FrazerDealer.Domain.Entities.RecurringJob", b =>
@@ -408,6 +411,20 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 .WithMany()
                 .HasForeignKey("CurrentSaleId")
                 .OnDelete(DeleteBehavior.SetNull);
+
+            b.HasMany("FrazerDealer.Domain.Entities.Prospect", "Prospects")
+                .WithMany("Vehicles")
+                .UsingEntity<Dictionary<string, object>>("ProspectVehicle",
+                    r => r.HasOne("FrazerDealer.Domain.Entities.Prospect", null)
+                        .WithMany()
+                        .HasForeignKey("ProspectsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired(),
+                    l => l.HasOne("FrazerDealer.Domain.Entities.Vehicle", null)
+                        .WithMany()
+                        .HasForeignKey("VehiclesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired());
 
             b.Navigation("CurrentSale");
         });
