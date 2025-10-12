@@ -207,6 +207,8 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
 
             b.ToTable("Prospects");
 
+            b.Navigation("ProspectVehicles");
+
             b.Navigation("Vehicles");
         });
 
@@ -338,17 +340,17 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
             b.ToTable("Vehicles");
         });
 
-        modelBuilder.Entity("ProspectVehicle", b =>
+        modelBuilder.Entity("FrazerDealer.Domain.Entities.ProspectVehicle", b =>
         {
-            b.Property<Guid>("ProspectsId")
+            b.Property<Guid>("ProspectId")
                 .HasColumnType("uniqueidentifier");
 
-            b.Property<Guid>("VehiclesId")
+            b.Property<Guid>("VehicleId")
                 .HasColumnType("uniqueidentifier");
 
-            b.HasKey("ProspectsId", "VehiclesId");
+            b.HasKey("ProspectId", "VehicleId");
 
-            b.HasIndex("VehiclesId");
+            b.HasIndex("VehicleId");
 
             b.ToTable("ProspectVehicle", (string)null);
         });
@@ -414,34 +416,44 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
 
             b.HasMany("FrazerDealer.Domain.Entities.Prospect", "Prospects")
                 .WithMany("Vehicles")
-                .UsingEntity<Dictionary<string, object>>("ProspectVehicle",
-                    r => r.HasOne("FrazerDealer.Domain.Entities.Prospect", null)
-                        .WithMany()
-                        .HasForeignKey("ProspectsId")
+                .UsingEntity<FrazerDealer.Domain.Entities.ProspectVehicle>(
+                    "ProspectVehicle",
+                    r => r.HasOne("FrazerDealer.Domain.Entities.Prospect", "Prospect")
+                        .WithMany("ProspectVehicles")
+                        .HasForeignKey("ProspectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired(),
-                    l => l.HasOne("FrazerDealer.Domain.Entities.Vehicle", null)
-                        .WithMany()
-                        .HasForeignKey("VehiclesId")
+                    l => l.HasOne("FrazerDealer.Domain.Entities.Vehicle", "Vehicle")
+                        .WithMany("ProspectVehicles")
+                        .HasForeignKey("VehicleId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired());
+                        .IsRequired(),
+                    j =>
+                    {
+                        j.HasKey("ProspectId", "VehicleId");
+                        j.ToTable("ProspectVehicle");
+                    });
 
             b.Navigation("CurrentSale");
         });
 
-        modelBuilder.Entity("ProspectVehicle", b =>
+        modelBuilder.Entity("FrazerDealer.Domain.Entities.ProspectVehicle", b =>
         {
-            b.HasOne("FrazerDealer.Domain.Entities.Prospect", null)
-                .WithMany()
-                .HasForeignKey("ProspectsId")
+            b.HasOne("FrazerDealer.Domain.Entities.Prospect", "Prospect")
+                .WithMany("ProspectVehicles")
+                .HasForeignKey("ProspectId")
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
 
-            b.HasOne("FrazerDealer.Domain.Entities.Vehicle", null)
-                .WithMany()
-                .HasForeignKey("VehiclesId")
+            b.HasOne("FrazerDealer.Domain.Entities.Vehicle", "Vehicle")
+                .WithMany("ProspectVehicles")
+                .HasForeignKey("VehicleId")
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
+
+            b.Navigation("Prospect");
+
+            b.Navigation("Vehicle");
         });
 
         modelBuilder.Entity("FrazerDealer.Domain.Entities.Customer", b =>
@@ -458,6 +470,8 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
 
         modelBuilder.Entity("FrazerDealer.Domain.Entities.Vehicle", b =>
         {
+            b.Navigation("ProspectVehicles");
+
             b.Navigation("Prospects");
 
             b.Navigation("SalesHistory");

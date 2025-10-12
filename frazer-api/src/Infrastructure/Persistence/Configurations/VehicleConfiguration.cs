@@ -24,6 +24,17 @@ public class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
 
         builder.HasMany(v => v.Prospects)
             .WithMany(p => p.Vehicles)
-            .UsingEntity(j => j.ToTable("ProspectVehicle"));
+            .UsingEntity<ProspectVehicle>(
+                j => j.HasOne(pv => pv.Prospect)
+                    .WithMany(p => p.ProspectVehicles)
+                    .HasForeignKey(pv => pv.ProspectId),
+                j => j.HasOne(pv => pv.Vehicle)
+                    .WithMany(v => v.ProspectVehicles)
+                    .HasForeignKey(pv => pv.VehicleId),
+                j =>
+                {
+                    j.HasKey(t => new { t.ProspectId, t.VehicleId });
+                    j.ToTable("ProspectVehicle");
+                });
     }
 }
