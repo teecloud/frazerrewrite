@@ -8,4 +8,5 @@ public class Prospect
     public string Phone { get; set; } = string.Empty;
 
     public ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
+    public ICollection<ProspectVehicle> ProspectVehicles { get; set; } = new List<ProspectVehicle>();
 }
