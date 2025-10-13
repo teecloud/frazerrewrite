@@ -1,5 +1,5 @@
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   IonApp,
   IonButton,
@@ -90,7 +90,7 @@ export class MainLayoutComponent {
     });
   }
 
-  readonly items: NavItem[] = [
+  private readonly dealerItems: NavItem[] = [
     { label: 'Dashboard', icon: 'speedometer-outline', path: '/dashboard' },
     { label: 'Inventory', icon: 'document-text-outline', path: '/inventory' },
     { label: 'Customers', icon: 'people-outline', path: '/customers' },
@@ -104,9 +104,33 @@ export class MainLayoutComponent {
     { label: 'Jobs', icon: 'cloud-upload-outline', path: '/jobs', roles: ['Admin', 'Manager'] },
   ];
 
-  readonly filteredItems = computed(() =>
-    this.items.filter((item) => !item.roles || item.roles.some((role) => this.auth.snapshot.roles.includes(role)))
-  );
+  private readonly customerItems: NavItem[] = [
+    { label: 'Payments', icon: 'wallet-outline', path: '/payments' },
+  ];
+
+  get filteredItems(): NavItem[] {
+    const roles = this.auth.snapshot.roles;
+
+    if (roles.includes('Customer') && roles.length === 1) {
+      return this.customerItems;
+    }
+
+    return this.dealerItems.filter(
+      (item) => !item.roles || item.roles.some((role) => this.auth.snapshot.roles.includes(role))
+    );
+  }
+
+  get menuTitle(): string {
+    return this.isCustomer ? "Customer Payments" : "Jackson's Dealer Suite";
+  }
+
+  get toolbarTitle(): string {
+    return this.isCustomer ? "Jen Cares — Payment Portal" : "Jackson's Dealer Suite Console";
+  }
+
+  private get isCustomer(): boolean {
+    return this.auth.snapshot.roles.includes('Customer');
+  }
 
   readonly roles$ = this.auth.roles$;
 

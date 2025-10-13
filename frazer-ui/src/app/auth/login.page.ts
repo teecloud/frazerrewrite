@@ -52,7 +52,10 @@ export class LoginPage {
       .login(username, password)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: () => this.router.navigate(['/dashboard']),
+        next: () => {
+          const redirect = this.auth.snapshot.roles.includes('Customer') ? '/payments' : '/dashboard';
+          this.router.navigate([redirect]);
+        },
         error: () => this.error.set('Unable to authenticate. Check credentials and try again.'),
       });
   }

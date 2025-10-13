@@ -1,4 +1,4 @@
-export type Role = 'Admin' | 'Manager' | 'Sales' | 'Clerk' | 'Service';
+export type Role = 'Admin' | 'Manager' | 'Sales' | 'Clerk' | 'Service' | 'Customer';
 
 export interface AuthResponse {
   accessToken: string;
