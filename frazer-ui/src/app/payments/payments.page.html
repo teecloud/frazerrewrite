@@ -5,20 +5,62 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Recent Activity</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list>
-        <ion-item *ngFor="let payment of payments$ | async">
-          <ion-label>
-            <h2>{{ payment.method }} — {{ payment.amount | currency }}</h2>
-            <p>{{ payment.status }} • {{ payment.collectedOn | date:'short' }}</p>
-          </ion-label>
-          <ion-button fill="outline" color="warning" slot="end">Retry</ion-button>
-        </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
+  <ng-container *ngIf="(isCustomer$ | async); else dealerPayments">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>{{ customerPlan.name }} Payment Plan</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p class="plan-summary">
+          You're scheduled to pay {{ customerPlan.amount | currency }} {{ customerPlan.frequency.toLowerCase() }} for your
+          {{ customerPlan.vehicle }}.
+        </p>
+        <ion-list lines="none">
+          <ion-item lines="none">
+            <ion-label>
+              <h2>Customer</h2>
+              <p>{{ customerPlan.name }}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-label>
+              <h2>Vehicle</h2>
+              <p>{{ customerPlan.vehicle }}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-label>
+              <h2>Payment Amount</h2>
+              <p>{{ customerPlan.amount | currency }}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-label>
+              <h2>Schedule</h2>
+              <p>{{ customerPlan.frequency }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+        <ion-button expand="block" color="primary">Make a Payment</ion-button>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
+  <ng-template #dealerPayments>
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Recent Activity</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let payment of payments$ | async">
+            <ion-label>
+              <h2>{{ payment.method }} — {{ payment.amount | currency }}</h2>
+              <p>{{ payment.status }} • {{ payment.collectedOn | date:'short' }}</p>
+            </ion-label>
+            <ion-button fill="outline" color="warning" slot="end">Retry</ion-button>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </ng-template>
 </ion-content>

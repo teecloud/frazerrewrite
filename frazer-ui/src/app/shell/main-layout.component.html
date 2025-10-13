@@ -3,12 +3,12 @@
     <ion-menu content-id="main" type="overlay">
       <ion-header>
         <ion-toolbar color="primary">
-          <ion-title>Jackson's Dealer Suite</ion-title>
+          <ion-title>{{ menuTitle }}</ion-title>
         </ion-toolbar>
       </ion-header>
       <ion-content>
         <ion-list>
-          <ion-menu-toggle auto-hide="false" *ngFor="let item of filteredItems()">
+          <ion-menu-toggle auto-hide="false" *ngFor="let item of filteredItems">
             <ion-item [routerLink]="item.path" routerLinkActive="active" lines="none">
               <ion-icon slot="start" [name]="item.icon"></ion-icon>
               <ion-label>{{ item.label }}</ion-label>
@@ -24,7 +24,7 @@
           <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
           </ion-buttons>
-          <ion-title>Jackson's Dealer Suite Console</ion-title>
+          <ion-title>{{ toolbarTitle }}</ion-title>
           <ion-buttons slot="end">
             <ion-button fill="clear" (click)="logout()">Sign out</ion-button>
           </ion-buttons>
