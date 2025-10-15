@@ -98,27 +98,6 @@ public partial class AddProspects : Migration
             });
 
         migrationBuilder.CreateTable(
-            name: "Photos",
-            columns: table => new
-            {
-                Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                VehicleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                Caption = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                IsPrimary = table.Column<bool>(type: "bit", nullable: false)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("PK_Photos", x => x.Id);
-                table.ForeignKey(
-                    name: "FK_Photos_Vehicles_VehicleId",
-                    column: x => x.VehicleId,
-                    principalTable: "Vehicles",
-                    principalColumn: "Id",
-                    onDelete: ReferentialAction.Cascade);
-            });
-
-        migrationBuilder.CreateTable(
             name: "Sales",
             columns: table => new
             {
@@ -256,11 +235,6 @@ public partial class AddProspects : Migration
             column: "SaleId");
 
         migrationBuilder.CreateIndex(
-            name: "IX_Photos_VehicleId",
-            table: "Photos",
-            column: "VehicleId");
-
-        migrationBuilder.CreateIndex(
             name: "IX_ProspectVehicle_VehicleId",
             table: "ProspectVehicle",
             column: "VehicleId");
@@ -306,9 +280,6 @@ public partial class AddProspects : Migration
 
         migrationBuilder.DropTable(
             name: "ProspectVehicle");
-
-        migrationBuilder.DropTable(
-            name: "Photos");
 
         migrationBuilder.DropTable(
             name: "RecurringJobs");
