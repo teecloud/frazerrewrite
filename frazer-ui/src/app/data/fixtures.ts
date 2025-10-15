@@ -22,6 +22,7 @@ export const mockVehicles: VehicleSummary[] = [
     make: 'Ford',
     model: 'Mustang',
     isSold: false,
+    primaryPhotoUrl: 'assets/vehicle-placeholder.svg',
   },
   {
     id: '2',
@@ -31,6 +32,7 @@ export const mockVehicles: VehicleSummary[] = [
     make: 'Jeep',
     model: 'Grand Cherokee',
     isSold: true,
+    primaryPhotoUrl: 'assets/vehicle-placeholder.svg',
   },
 ];
 

@@ -1,3 +1,4 @@
+using System.Linq;
 using FrazerDealer.Application.Common;
 using FrazerDealer.Application.Interfaces;
 using FrazerDealer.Contracts.Customers;
@@ -7,6 +8,7 @@ using FrazerDealer.Contracts.Inventory;
 using FrazerDealer.Contracts.Jobs;
 using FrazerDealer.Contracts.Payments;
 using FrazerDealer.Contracts.Prospects;
+using FrazerDealer.Contracts.Photos;
 using FrazerDealer.Contracts.Reports;
 using FrazerDealer.Contracts.Sales;
 using FrazerDealer.Domain.Entities;
@@ -28,7 +30,18 @@ public class FakeVehicleService : IVehicleService
     {
         var vehicles = await _context.Vehicles
             .AsNoTracking()
-            .Select(v => new VehicleSummary(v.Id, v.StockNumber, v.Vin, v.Year, v.Make, v.Model, v.IsSold))
+            .Select(v => new VehicleSummary(
+                v.Id,
+                v.StockNumber,
+                v.Vin,
+                v.Year,
+                v.Make,
+                v.Model,
+                v.IsSold,
+                v.Photos
+                    .Where(p => p.IsPrimary)
+                    .Select(p => p.Url)
+                    .FirstOrDefault()))
             .ToListAsync(cancellationToken);
 
         return Result<IReadOnlyCollection<VehicleSummary>>.Success(vehicles);
@@ -36,7 +49,10 @@ public class FakeVehicleService : IVehicleService
 
     public async Task<Result<VehicleDetail>> GetVehicleAsync(Guid id, CancellationToken cancellationToken)
     {
-        var vehicle = await _context.Vehicles.AsNoTracking().FirstOrDefaultAsync(v => v.Id == id, cancellationToken);
+        var vehicle = await _context.Vehicles
+            .AsNoTracking()
+            .Include(v => v.Photos)
+            .FirstOrDefaultAsync(v => v.Id == id, cancellationToken);
         if (vehicle is null)
         {
             return Result<VehicleDetail>.Failure("Vehicle not found");
@@ -55,7 +71,12 @@ public class FakeVehicleService : IVehicleService
             vehicle.IsSold,
             vehicle.DateArrived,
             vehicle.DateSold,
-            vehicle.CurrentSaleId));
+            vehicle.CurrentSaleId,
+            vehicle.Photos
+                .OrderByDescending(p => p.IsPrimary)
+                .ThenBy(p => p.Url)
+                .Select(p => new PhotoSummary(p.Id, p.VehicleId, p.Url, p.Caption, p.IsPrimary))
+                .ToList()));
     }
 
     public async Task<Result<VehicleDetail>> CreateVehicleAsync(CreateVehicleRequest request, CancellationToken cancellationToken)
@@ -112,6 +133,129 @@ public class FakeVehicleService : IVehicleService
         vehicle.IsSold = true;
         vehicle.DateSold = DateTime.UtcNow;
         await _context.SaveChangesAsync(cancellationToken);
+        return Result.Success();
+    }
+}
+
+public class FakePhotoService : IPhotoService
+{
+    private readonly AppDbContext _context;
+
+    public FakePhotoService(AppDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<Result<IReadOnlyCollection<PhotoSummary>>> GetPhotosAsync(Guid? vehicleId, CancellationToken cancellationToken)
+    {
+        var query = _context.Photos.AsNoTracking();
+
+        if (vehicleId.HasValue)
+        {
+            query = query.Where(p => p.VehicleId == vehicleId.Value);
+        }
+
+        var photos = await query
+            .OrderByDescending(p => p.IsPrimary)
+            .ThenBy(p => p.Url)
+            .Select(p => new PhotoSummary(p.Id, p.VehicleId, p.Url, p.Caption, p.IsPrimary))
+            .ToListAsync(cancellationToken);
+
+        return Result<IReadOnlyCollection<PhotoSummary>>.Success(photos);
+    }
+
+    public async Task<Result<PhotoDetail>> GetPhotoAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var photo = await _context.Photos.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+        if (photo is null)
+        {
+            return Result<PhotoDetail>.Failure("Photo not found");
+        }
+
+        return Result<PhotoDetail>.Success(new PhotoDetail(photo.Id, photo.VehicleId, photo.Url, photo.Caption, photo.IsPrimary));
+    }
+
+    public async Task<Result<PhotoDetail>> CreatePhotoAsync(CreatePhotoRequest request, CancellationToken cancellationToken)
+    {
+        var vehicleExists = await _context.Vehicles.AnyAsync(v => v.Id == request.VehicleId, cancellationToken);
+        if (!vehicleExists)
+        {
+            return Result<PhotoDetail>.Failure("Vehicle not found");
+        }
+
+        if (request.IsPrimary)
+        {
+            await _context.Photos
+                .Where(p => p.VehicleId == request.VehicleId && p.IsPrimary)
+                .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.IsPrimary, _ => false), cancellationToken);
+        }
+
+        var photo = new Photo
+        {
+            Id = Guid.NewGuid(),
+            VehicleId = request.VehicleId,
+            Url = request.Url,
+            Caption = request.Caption,
+            IsPrimary = request.IsPrimary,
+        };
+
+        _context.Photos.Add(photo);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return Result<PhotoDetail>.Success(new PhotoDetail(photo.Id, photo.VehicleId, photo.Url, photo.Caption, photo.IsPrimary));
+    }
+
+    public async Task<Result> UpdatePhotoAsync(Guid id, UpdatePhotoRequest request, CancellationToken cancellationToken)
+    {
+        var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+        if (photo is null)
+        {
+            return Result.Failure("Photo not found");
+        }
+
+        if (request.IsPrimary)
+        {
+            await _context.Photos
+                .Where(p => p.VehicleId == photo.VehicleId && p.IsPrimary && p.Id != id)
+                .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.IsPrimary, _ => false), cancellationToken);
+        }
+
+        photo.Url = request.Url;
+        photo.Caption = request.Caption;
+        photo.IsPrimary = request.IsPrimary;
+
+        await _context.SaveChangesAsync(cancellationToken);
+        return Result.Success();
+    }
+
+    public async Task<Result> DeletePhotoAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+        if (photo is null)
+        {
+            return Result.Failure("Photo not found");
+        }
+
+        var wasPrimary = photo.IsPrimary;
+        var vehicleId = photo.VehicleId;
+
+        _context.Photos.Remove(photo);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        if (wasPrimary)
+        {
+            var nextPrimary = await _context.Photos
+                .Where(p => p.VehicleId == vehicleId)
+                .OrderBy(p => p.Url)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (nextPrimary is not null)
+            {
+                nextPrimary.IsPrimary = true;
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+        }
+
         return Result.Success();
     }
 }

@@ -15,6 +15,7 @@ export interface VehicleSummary {
   make: string;
   model: string;
   isSold: boolean;
+  primaryPhotoUrl?: string;
 }
 
 export interface VehicleDetail extends VehicleSummary {

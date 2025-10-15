@@ -16,6 +16,12 @@
 
   <ion-list>
     <ion-item *ngFor="let vehicle of filtered$ | async">
+      <ion-thumbnail slot="start">
+        <ion-img
+          [src]="vehicle.primaryPhotoUrl || 'assets/vehicle-placeholder.svg'"
+          [alt]="'Vehicle image for ' + vehicle.stockNumber"
+        ></ion-img>
+      </ion-thumbnail>
       <ion-label>
         <h2>{{ vehicle.stockNumber }} — {{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</h2>
         <p>VIN {{ vehicle.vin }} • Status: {{ vehicle.isSold ? 'Sold' : 'Available' }}</p>

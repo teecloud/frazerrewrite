@@ -185,6 +185,32 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
             b.ToTable("Payments");
         });
 
+        modelBuilder.Entity("FrazerDealer.Domain.Entities.Photo", b =>
+        {
+            b.Property<Guid>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("uniqueidentifier");
+
+            b.Property<string>("Caption")
+                .HasColumnType("nvarchar(max)");
+
+            b.Property<bool>("IsPrimary")
+                .HasColumnType("bit");
+
+            b.Property<string>("Url")
+                .IsRequired()
+                .HasColumnType("nvarchar(max)");
+
+            b.Property<Guid>("VehicleId")
+                .HasColumnType("uniqueidentifier");
+
+            b.HasKey("Id");
+
+            b.HasIndex("VehicleId");
+
+            b.ToTable("Photos");
+        });
+
         modelBuilder.Entity("FrazerDealer.Domain.Entities.Prospect", b =>
         {
             b.Property<Guid>("Id")
@@ -407,6 +433,17 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
             b.Navigation("Vehicle");
         });
 
+        modelBuilder.Entity("FrazerDealer.Domain.Entities.Photo", b =>
+        {
+            b.HasOne("FrazerDealer.Domain.Entities.Vehicle", "Vehicle")
+                .WithMany("Photos")
+                .HasForeignKey("VehicleId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            b.Navigation("Vehicle");
+        });
+
         modelBuilder.Entity("FrazerDealer.Domain.Entities.Vehicle", b =>
         {
             b.HasOne("FrazerDealer.Domain.Entities.Sale", "CurrentSale")
@@ -470,6 +507,8 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
 
         modelBuilder.Entity("FrazerDealer.Domain.Entities.Vehicle", b =>
         {
+            b.Navigation("Photos");
+
             b.Navigation("ProspectVehicles");
 
             b.Navigation("Prospects");

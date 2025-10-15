@@ -26,7 +26,24 @@ public static class SeedData
                     Trim = "Premium",
                     Price = 41500m,
                     Cost = 36500m,
-                    DateArrived = DateTime.UtcNow.AddDays(-10)
+                    DateArrived = DateTime.UtcNow.AddDays(-10),
+                    Photos =
+                    {
+                        new Photo
+                        {
+                            Id = Guid.NewGuid(),
+                            Url = "https://images.frazer.test/inventory/fz-1001-primary.jpg",
+                            Caption = "Front three-quarter view",
+                            IsPrimary = true
+                        },
+                        new Photo
+                        {
+                            Id = Guid.NewGuid(),
+                            Url = "https://images.frazer.test/inventory/fz-1001-interior.jpg",
+                            Caption = "Premium interior",
+                            IsPrimary = false
+                        }
+                    }
                 },
                 new()
                 {
@@ -39,7 +56,17 @@ public static class SeedData
                     Trim = "Limited",
                     Price = 50500m,
                     Cost = 44200m,
-                    DateArrived = DateTime.UtcNow.AddDays(-4)
+                    DateArrived = DateTime.UtcNow.AddDays(-4),
+                    Photos =
+                    {
+                        new Photo
+                        {
+                            Id = Guid.NewGuid(),
+                            Url = "https://images.frazer.test/inventory/fz-1002-primary.jpg",
+                            Caption = "Dealer lot exterior",
+                            IsPrimary = true
+                        }
+                    }
                 }
             };
 
