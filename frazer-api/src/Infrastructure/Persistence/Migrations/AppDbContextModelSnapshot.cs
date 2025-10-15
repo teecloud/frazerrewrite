@@ -416,8 +416,9 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
 
             b.HasMany("FrazerDealer.Domain.Entities.Prospect", "Prospects")
                 .WithMany("Vehicles")
-                .UsingEntity<FrazerDealer.Domain.Entities.ProspectVehicle>(
+                .UsingEntity(
                     "ProspectVehicle",
+                    typeof(FrazerDealer.Domain.Entities.ProspectVehicle),
                     r => r.HasOne("FrazerDealer.Domain.Entities.Prospect", "Prospect")
                         .WithMany("ProspectVehicles")
                         .HasForeignKey("ProspectId")
