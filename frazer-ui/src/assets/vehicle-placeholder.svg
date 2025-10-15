@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" role="img" aria-label="Placeholder vehicle">
+  <defs>
+    <linearGradient id="body" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <rect width="320" height="200" fill="#0f172a" rx="16" />
+  <g transform="translate(40 80)">
+    <rect x="0" y="32" width="240" height="40" rx="20" fill="url(#body)" />
+    <rect x="32" y="0" width="176" height="52" rx="26" fill="#1e293b" stroke="#93c5fd" stroke-width="4" />
+    <circle cx="64" cy="88" r="24" fill="#0f172a" stroke="#cbd5f5" stroke-width="8" />
+    <circle cx="192" cy="88" r="24" fill="#0f172a" stroke="#cbd5f5" stroke-width="8" />
+    <circle cx="64" cy="88" r="10" fill="#93c5fd" />
+    <circle cx="192" cy="88" r="10" fill="#93c5fd" />
+  </g>
+  <text x="160" y="172" fill="#e2e8f0" font-family="'Segoe UI', Arial, sans-serif" font-size="24" text-anchor="middle">Frazer Inventory</text>
+</svg>

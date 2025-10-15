@@ -1,6 +1,16 @@
+using FrazerDealer.Contracts.Photos;
+
 namespace FrazerDealer.Contracts.Inventory;
 
-public record VehicleSummary(Guid Id, string StockNumber, string Vin, string Year, string Make, string Model, bool IsSold);
+public record VehicleSummary(
+    Guid Id,
+    string StockNumber,
+    string Vin,
+    string Year,
+    string Make,
+    string Model,
+    bool IsSold,
+    string? PrimaryPhotoUrl = null);
 
 public record VehicleDetail(
     Guid Id,
@@ -15,7 +25,8 @@ public record VehicleDetail(
     bool IsSold,
     DateTime? DateArrived,
     DateTime? DateSold,
-    Guid? CurrentSaleId);
+    Guid? CurrentSaleId,
+    IReadOnlyCollection<PhotoSummary>? Photos = null);
 
 public record CreateVehicleRequest(
     string StockNumber,

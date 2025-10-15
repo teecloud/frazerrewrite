@@ -18,6 +18,7 @@ public class AppDbContext : DbContext
     public DbSet<InsuranceProvider> InsuranceProviders => Set<InsuranceProvider>();
     public DbSet<RecurringJob> RecurringJobs => Set<RecurringJob>();
     public DbSet<JobLog> JobLogs => Set<JobLog>();
+    public DbSet<Photo> Photos => Set<Photo>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -31,6 +32,16 @@ public class AppDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(e => e.CurrentSaleId)
                 .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<Photo>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.HasOne(e => e.Vehicle)
+                .WithMany(e => e.Photos)
+                .HasForeignKey(e => e.VehicleId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Customer>(entity =>

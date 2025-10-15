@@ -39,4 +39,51 @@
       </form>
     </ion-card-content>
   </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Add Inventory Vehicle</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <form [formGroup]="inventoryForm" (ngSubmit)="addInventory()">
+        <ion-item>
+          <ion-label position="stacked">Stock Number</ion-label>
+          <ion-input formControlName="stockNumber" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">VIN</ion-label>
+          <ion-input formControlName="vin" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Year</ion-label>
+          <ion-input formControlName="year" type="number" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Make</ion-label>
+          <ion-input formControlName="make" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Model</ion-label>
+          <ion-input formControlName="model" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Trim</ion-label>
+          <ion-input formControlName="trim" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Price</ion-label>
+          <ion-input formControlName="price" type="number" min="0" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Cost</ion-label>
+          <ion-input formControlName="cost" type="number" min="0" required></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Date Arrived</ion-label>
+          <ion-input formControlName="dateArrived" type="date"></ion-input>
+        </ion-item>
+        <ion-button type="submit" expand="block">Add Vehicle</ion-button>
+      </form>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
