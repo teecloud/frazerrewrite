@@ -24,19 +24,18 @@ public class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
 
         builder.HasMany(v => v.Prospects)
             .WithMany(p => p.Vehicles)
-            .UsingEntity(
-                typeof(ProspectVehicle),
-                j => j.HasOne(typeof(Prospect))
-                    .WithMany(nameof(Prospect.ProspectVehicles))
-                    .HasForeignKey(nameof(ProspectVehicle.ProspectId))
+            .UsingEntity<ProspectVehicle>(
+                j => j.HasOne(pv => pv.Prospect)
+                    .WithMany(p => p.ProspectVehicles)
+                    .HasForeignKey(pv => pv.ProspectId)
                     .OnDelete(DeleteBehavior.Cascade),
-                j => j.HasOne(typeof(Vehicle))
-                    .WithMany(nameof(Vehicle.ProspectVehicles))
-                    .HasForeignKey(nameof(ProspectVehicle.VehicleId))
+                j => j.HasOne(pv => pv.Vehicle)
+                    .WithMany(v => v.ProspectVehicles)
+                    .HasForeignKey(pv => pv.VehicleId)
                     .OnDelete(DeleteBehavior.Cascade),
                 j =>
                 {
-                    j.HasKey(nameof(ProspectVehicle.ProspectId), nameof(ProspectVehicle.VehicleId));
+                    j.HasKey(pv => new { pv.ProspectId, pv.VehicleId });
                     j.ToTable("ProspectVehicle");
                 });
     }
