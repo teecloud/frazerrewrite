@@ -18,6 +18,5 @@ public class Vehicle
     public Sale? CurrentSale { get; set; }
     public List<Sale> SalesHistory { get; set; } = new();
     public ICollection<Prospect> Prospects { get; set; } = new List<Prospect>();
-    public ICollection<ProspectVehicle> ProspectVehicles { get; set; } = new List<ProspectVehicle>();
     public ICollection<Photo> Photos { get; set; } = new List<Photo>();
 }

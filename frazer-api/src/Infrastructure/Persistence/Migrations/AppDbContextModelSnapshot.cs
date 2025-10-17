@@ -233,8 +233,6 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
 
             b.ToTable("Prospects");
 
-            b.Navigation("ProspectVehicles");
-
             b.Navigation("Vehicles");
         });
 
@@ -456,12 +454,12 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 .UsingEntity(
                     typeof(FrazerDealer.Domain.Entities.ProspectVehicle),
                     r => r.HasOne("FrazerDealer.Domain.Entities.Prospect", "Prospect")
-                        .WithMany("ProspectVehicles")
+                        .WithMany()
                         .HasForeignKey("ProspectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired(),
                     l => l.HasOne("FrazerDealer.Domain.Entities.Vehicle", "Vehicle")
-                        .WithMany("ProspectVehicles")
+                        .WithMany()
                         .HasForeignKey("VehicleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired(),
@@ -477,13 +475,13 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
         modelBuilder.Entity("FrazerDealer.Domain.Entities.ProspectVehicle", b =>
         {
             b.HasOne("FrazerDealer.Domain.Entities.Prospect", "Prospect")
-                .WithMany("ProspectVehicles")
+                .WithMany()
                 .HasForeignKey("ProspectId")
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
 
             b.HasOne("FrazerDealer.Domain.Entities.Vehicle", "Vehicle")
-                .WithMany("ProspectVehicles")
+                .WithMany()
                 .HasForeignKey("VehicleId")
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
@@ -508,8 +506,6 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
         modelBuilder.Entity("FrazerDealer.Domain.Entities.Vehicle", b =>
         {
             b.Navigation("Photos");
-
-            b.Navigation("ProspectVehicles");
 
             b.Navigation("Prospects");
 
