@@ -1,5 +1,7 @@
 using System.Linq;
 using FrazerDealer.Domain.Entities;
+using FrazerDealer.Infrastructure.Persistence;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -10,6 +12,8 @@ public static class SeedData
     public static async Task SeedAsync(AppDbContext context, ILogger logger, CancellationToken cancellationToken)
     {
         await context.Database.MigrateAsync(cancellationToken);
+
+        await EnsureSalesSchemaAsync(context, logger, cancellationToken);
 
         if (!await context.Vehicles.AnyAsync(cancellationToken))
         {
@@ -162,5 +166,99 @@ public static class SeedData
 
         await context.SaveChangesAsync(cancellationToken);
         logger.LogInformation("Database seeded successfully.");
+    }
+
+    private static async Task EnsureSalesSchemaAsync(AppDbContext context, ILogger logger, CancellationToken cancellationToken)
+    {
+        const string ensureSalesSql = """
+IF OBJECT_ID(N'[dbo].[Sales]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[Sales]
+    (
+        [Id] UNIQUEIDENTIFIER NOT NULL,
+        [VehicleId] UNIQUEIDENTIFIER NOT NULL,
+        [CustomerId] UNIQUEIDENTIFIER NOT NULL,
+        [Status] INT NOT NULL,
+        [CreatedOn] DATETIME2 NOT NULL,
+        [CompletedOn] DATETIME2 NULL,
+        [Subtotal] DECIMAL(18,2) NOT NULL,
+        [FeesTotal] DECIMAL(18,2) NOT NULL,
+        [PaymentsTotal] DECIMAL(18,2) NOT NULL,
+        CONSTRAINT [PK_Sales] PRIMARY KEY ([Id])
+    );
+
+    CREATE INDEX [IX_Sales_CustomerId] ON [dbo].[Sales] ([CustomerId]);
+    CREATE INDEX [IX_Sales_VehicleId] ON [dbo].[Sales] ([VehicleId]);
+
+    ALTER TABLE [dbo].[Sales] WITH CHECK
+        ADD CONSTRAINT [FK_Sales_Customers_CustomerId]
+        FOREIGN KEY ([CustomerId]) REFERENCES [dbo].[Customers]([Id]) ON DELETE NO ACTION;
+
+    ALTER TABLE [dbo].[Sales] WITH CHECK
+        ADD CONSTRAINT [FK_Sales_Vehicles_VehicleId]
+        FOREIGN KEY ([VehicleId]) REFERENCES [dbo].[Vehicles]([Id]) ON DELETE NO ACTION;
+END;
+
+IF OBJECT_ID(N'[dbo].[Fees]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[Fees]
+    (
+        [Id] UNIQUEIDENTIFIER NOT NULL,
+        [SaleId] UNIQUEIDENTIFIER NOT NULL,
+        [Code] NVARCHAR(MAX) NOT NULL,
+        [Description] NVARCHAR(MAX) NOT NULL,
+        [Amount] DECIMAL(18,2) NOT NULL,
+        [IsRecurring] BIT NOT NULL,
+        CONSTRAINT [PK_Fees] PRIMARY KEY ([Id])
+    );
+
+    CREATE INDEX [IX_Fees_SaleId] ON [dbo].[Fees] ([SaleId]);
+
+    ALTER TABLE [dbo].[Fees] WITH CHECK
+        ADD CONSTRAINT [FK_Fees_Sales_SaleId]
+        FOREIGN KEY ([SaleId]) REFERENCES [dbo].[Sales]([Id]) ON DELETE CASCADE;
+END;
+
+IF OBJECT_ID(N'[dbo].[Payments]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[Payments]
+    (
+        [Id] UNIQUEIDENTIFIER NOT NULL,
+        [SaleId] UNIQUEIDENTIFIER NOT NULL,
+        [Amount] DECIMAL(18,2) NOT NULL,
+        [CollectedOn] DATETIME2 NOT NULL,
+        [Method] NVARCHAR(MAX) NOT NULL,
+        [Status] INT NOT NULL,
+        [ExternalReference] NVARCHAR(MAX) NULL,
+        CONSTRAINT [PK_Payments] PRIMARY KEY ([Id])
+    );
+
+    CREATE INDEX [IX_Payments_SaleId] ON [dbo].[Payments] ([SaleId]);
+
+    ALTER TABLE [dbo].[Payments] WITH CHECK
+        ADD CONSTRAINT [FK_Payments_Sales_SaleId]
+        FOREIGN KEY ([SaleId]) REFERENCES [dbo].[Sales]([Id]) ON DELETE CASCADE;
+END;
+
+IF OBJECT_ID(N'[dbo].[Vehicles]', N'U') IS NOT NULL
+    AND COL_LENGTH(N'[dbo].[Vehicles]', 'CurrentSaleId') IS NOT NULL
+    AND NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = 'FK_Vehicles_Sales_CurrentSaleId')
+BEGIN
+    ALTER TABLE [dbo].[Vehicles] WITH CHECK
+        ADD CONSTRAINT [FK_Vehicles_Sales_CurrentSaleId]
+        FOREIGN KEY ([CurrentSaleId]) REFERENCES [dbo].[Sales]([Id]) ON DELETE SET NULL;
+
+    ALTER TABLE [dbo].[Vehicles] CHECK CONSTRAINT [FK_Vehicles_Sales_CurrentSaleId];
+END;
+""";
+
+        try
+        {
+            await context.Database.ExecuteSqlRawAsync(ensureSalesSql, cancellationToken);
+        }
+        catch (SqlException ex)
+        {
+            logger.LogWarning(ex, "Failed to ensure sales schema exists. {Message}", ex.Message);
+        }
     }
 }
