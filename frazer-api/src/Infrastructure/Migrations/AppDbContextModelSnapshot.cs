@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace FrazerDealer.Infrastructure.Persistence.Migrations;
+namespace Infrastructure.Migrations;
 
 [DbContext(typeof(AppDbContext))]
 partial class AppDbContextModelSnapshot : ModelSnapshot
@@ -30,35 +30,43 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
 
             b.Property<string>("Address")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(256)
+                .HasColumnType("nvarchar(256)");
 
             b.Property<string>("City")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(128)
+                .HasColumnType("nvarchar(128)");
 
             b.Property<string>("Email")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(256)
+                .HasColumnType("nvarchar(256)");
 
             b.Property<string>("FirstName")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(128)
+                .HasColumnType("nvarchar(128)");
 
             b.Property<string>("LastName")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(128)
+                .HasColumnType("nvarchar(128)");
 
             b.Property<string>("Phone")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(32)
+                .HasColumnType("nvarchar(32)");
 
             b.Property<string>("PostalCode")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(32)
+                .HasColumnType("nvarchar(32)");
 
             b.Property<string>("State")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(64)
+                .HasColumnType("nvarchar(64)");
 
             b.HasKey("Id");
 
@@ -71,22 +79,24 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 .ValueGeneratedOnAdd()
                 .HasColumnType("uniqueidentifier");
 
+            b.Property<decimal>("Amount")
+                .HasColumnType("numeric(18,2)");
+
             b.Property<string>("Code")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(64)
+                .HasColumnType("nvarchar(64)");
 
             b.Property<string>("Description")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(256)
+                .HasColumnType("nvarchar(256)");
 
             b.Property<bool>("IsRecurring")
                 .HasColumnType("bit");
 
             b.Property<Guid>("SaleId")
                 .HasColumnType("uniqueidentifier");
-
-            b.Property<decimal>("Amount")
-                .HasColumnType("decimal(18,2)");
 
             b.HasKey("Id");
 
@@ -103,14 +113,16 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
 
             b.Property<string>("Email")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(256)
+                .HasColumnType("nvarchar(256)");
 
             b.Property<bool>("IsActive")
                 .HasColumnType("bit");
 
             b.Property<string>("Name")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(128)
+                .HasColumnType("nvarchar(128)");
 
             b.Property<string>("Notes")
                 .IsRequired()
@@ -118,7 +130,8 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
 
             b.Property<string>("Phone")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(32)
+                .HasColumnType("nvarchar(32)");
 
             b.HasKey("Id");
 
@@ -135,7 +148,8 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 .HasColumnType("datetime2");
 
             b.Property<string>("Message")
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(1024)
+                .HasColumnType("nvarchar(1024)");
 
             b.Property<Guid>("RecurringJobId")
                 .HasColumnType("uniqueidentifier");
@@ -160,17 +174,19 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 .HasColumnType("uniqueidentifier");
 
             b.Property<decimal>("Amount")
-                .HasColumnType("decimal(18,2)");
+                .HasColumnType("numeric(18,2)");
 
             b.Property<DateTime>("CollectedOn")
                 .HasColumnType("datetime2");
 
             b.Property<string>("ExternalReference")
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(128)
+                .HasColumnType("nvarchar(128)");
 
             b.Property<string>("Method")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(64)
+                .HasColumnType("nvarchar(64)");
 
             b.Property<Guid>("SaleId")
                 .HasColumnType("uniqueidentifier");
@@ -243,7 +259,8 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
 
             b.Property<string>("CronExpression")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(64)
+                .HasColumnType("nvarchar(64)");
 
             b.Property<DateTime>("CreatedOn")
                 .HasColumnType("datetime2");
@@ -256,7 +273,8 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
 
             b.Property<string>("Name")
                 .IsRequired()
-                .HasColumnType("nvarchar(max)");
+                .HasMaxLength(128)
+                .HasColumnType("nvarchar(128)");
 
             b.HasKey("Id");
 
@@ -276,10 +294,10 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 .HasColumnType("uniqueidentifier");
 
             b.Property<decimal>("FeesTotal")
-                .HasColumnType("decimal(18,2)");
+                .HasColumnType("numeric(18,2)");
 
             b.Property<decimal>("PaymentsTotal")
-                .HasColumnType("decimal(18,2)");
+                .HasColumnType("numeric(18,2)");
 
             b.Property<DateTime>("CreatedOn")
                 .HasColumnType("datetime2");
@@ -288,7 +306,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 .HasColumnType("int");
 
             b.Property<decimal>("Subtotal")
-                .HasColumnType("decimal(18,2)");
+                .HasColumnType("numeric(18,2)");
 
             b.Property<Guid>("VehicleId")
                 .HasColumnType("uniqueidentifier");
