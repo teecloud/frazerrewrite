@@ -26,11 +26,11 @@ public class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
             .WithMany(p => p.Vehicles)
             .UsingEntity<ProspectVehicle>(
                 j => j.HasOne(pv => pv.Prospect)
-                    .WithMany(p => p.ProspectVehicles)
+                    .WithMany()
                     .HasForeignKey(pv => pv.ProspectId)
                     .OnDelete(DeleteBehavior.Cascade),
                 j => j.HasOne(pv => pv.Vehicle)
-                    .WithMany(v => v.ProspectVehicles)
+                    .WithMany()
                     .HasForeignKey(pv => pv.VehicleId)
                     .OnDelete(DeleteBehavior.Cascade),
                 j =>
