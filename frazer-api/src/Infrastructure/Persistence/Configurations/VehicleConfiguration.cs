@@ -22,21 +22,5 @@ public class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
             .WithOne(s => s.Vehicle)
             .HasForeignKey(s => s.VehicleId);
 
-        builder.HasMany(v => v.Prospects)
-            .WithMany(p => p.Vehicles)
-            .UsingEntity<ProspectVehicle>(
-                j => j.HasOne(pv => pv.Prospect)
-                    .WithMany()
-                    .HasForeignKey(pv => pv.ProspectId)
-                    .OnDelete(DeleteBehavior.Cascade),
-                j => j.HasOne(pv => pv.Vehicle)
-                    .WithMany()
-                    .HasForeignKey(pv => pv.VehicleId)
-                    .OnDelete(DeleteBehavior.Cascade),
-                j =>
-                {
-                    j.HasKey(pv => new { pv.ProspectId, pv.VehicleId });
-                    j.ToTable("ProspectVehicle");
-                });
     }
 }
