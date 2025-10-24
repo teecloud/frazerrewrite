@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor } from '@angular/common';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -46,6 +46,7 @@ import { VehicleSummary } from '../shared/models';
     ReactiveFormsModule,
     AsyncPipe,
     NgFor,
+    NgIf,
   ],
   templateUrl: './inventory.page.html',
   styleUrls: ['./inventory.page.scss'],
@@ -58,12 +59,32 @@ export class InventoryPage {
 
   readonly vehicles$ = this.fixtures.vehicles$;
 
+  uploadedPhotos: Record<string, string[]> = {};
+
   readonly filtered$ = combineLatest([
     this.vehicles$,
     this.search.valueChanges.pipe(startWith(this.search.value)),
   ]).pipe(
     map(([vehicles, term]) => this.filterVehicles(vehicles, term))
   );
+
+  async onPhotosSelected(stockNumber: string, event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+
+    const files = Array.from(input.files);
+    const photos = await Promise.all(files.map((file) => this.readFileAsDataUrl(file)));
+
+    const existing = this.uploadedPhotos[stockNumber] ?? [];
+    this.uploadedPhotos = {
+      ...this.uploadedPhotos,
+      [stockNumber]: [...existing, ...photos],
+    };
+
+    input.value = '';
+  }
 
   private filterVehicles(vehicles: VehicleSummary[], term: string): VehicleSummary[] {
     const value = term?.toLowerCase() ?? '';
@@ -77,5 +98,14 @@ export class InventoryPage {
         .toLowerCase()
         .includes(value)
     );
+  }
+
+  private readFileAsDataUrl(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file);
+    });
   }
 }

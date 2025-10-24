@@ -25,10 +25,32 @@
       <ion-label>
         <h2>{{ vehicle.stockNumber }} — {{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</h2>
         <p>VIN {{ vehicle.vin }} • Status: {{ vehicle.isSold ? 'Sold' : 'Available' }}</p>
+        <div
+          class="photo-gallery"
+          *ngIf="uploadedPhotos[vehicle.stockNumber]?.length as photos"
+          aria-label="Uploaded photos"
+        >
+          <ion-img
+            *ngFor="let photo of photos; index as photoIndex"
+            [src]="photo"
+            [alt]="'Uploaded photo ' + (photoIndex + 1) + ' for ' + vehicle.stockNumber"
+          ></ion-img>
+        </div>
       </ion-label>
       <ion-buttons slot="end">
         <ion-button fill="clear">View</ion-button>
         <ion-button fill="outline" color="success">Start Sale</ion-button>
+        <input
+          #fileInput
+          class="sr-only"
+          type="file"
+          accept="image/*"
+          multiple
+          (change)="onPhotosSelected(vehicle.stockNumber, $event)"
+        />
+        <ion-button fill="outline" type="button" (click)="fileInput.click()">
+          Add Photos
+        </ion-button>
       </ion-buttons>
     </ion-item>
   </ion-list>
