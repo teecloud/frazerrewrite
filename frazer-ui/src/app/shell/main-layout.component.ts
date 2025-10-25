@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { NgFor } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import {
   IonApp,
@@ -65,8 +65,6 @@ interface NavItem {
     RouterLinkActive,
     RouterOutlet,
     NgFor,
-    NgIf,
-    AsyncPipe,
   ],
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.scss'],

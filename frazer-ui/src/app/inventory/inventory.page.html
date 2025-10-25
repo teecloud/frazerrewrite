@@ -25,17 +25,15 @@
       <ion-label>
         <h2>{{ vehicle.stockNumber }} — {{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</h2>
         <p>VIN {{ vehicle.vin }} • Status: {{ vehicle.isSold ? 'Sold' : 'Available' }}</p>
-        <div
-          class="photo-gallery"
-          *ngIf="uploadedPhotos[vehicle.stockNumber]?.length as photos"
-          aria-label="Uploaded photos"
-        >
-          <ion-img
-            *ngFor="let photo of photos; index as photoIndex"
-            [src]="photo"
-            [alt]="'Uploaded photo ' + (photoIndex + 1) + ' for ' + vehicle.stockNumber"
-          ></ion-img>
-        </div>
+        <ng-container *ngIf="uploadedPhotos[vehicle.stockNumber] as photos">
+          <div class="photo-gallery" *ngIf="photos.length" aria-label="Uploaded photos">
+            <ion-img
+              *ngFor="let photo of photos; index as photoIndex"
+              [src]="photo"
+              [alt]="'Uploaded photo ' + (photoIndex + 1) + ' for ' + vehicle.stockNumber"
+            ></ion-img>
+          </div>
+        </ng-container>
       </ion-label>
       <ion-buttons slot="end">
         <ion-button fill="clear">View</ion-button>
