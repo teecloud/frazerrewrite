@@ -1,4 +1,4 @@
-import { AsyncPipe, CurrencyPipe, DatePipe, NgFor } from '@angular/common';
+import { AsyncPipe, DatePipe, NgFor } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
@@ -37,7 +37,6 @@ import { provideFixtures } from '../data/fixtures';
     AsyncPipe,
     NgFor,
     DatePipe,
-    CurrencyPipe,
   ],
   templateUrl: './sales.list.page.html',
   styleUrls: ['./sales.page.scss'],

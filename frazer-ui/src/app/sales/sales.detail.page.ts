@@ -1,4 +1,4 @@
-import { AsyncPipe, CurrencyPipe, DatePipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe, CurrencyPipe, DatePipe, NgIf } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -40,7 +40,6 @@ import { provideFixtures } from '../data/fixtures';
     IonLabel,
     AsyncPipe,
     NgIf,
-    NgFor,
     DatePipe,
     CurrencyPipe,
   ],
